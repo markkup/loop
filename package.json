@@ -10,7 +10,7 @@
     "lint": "tslint 'src/**/*.ts'",
     "clean": "node tasks/clean.js",
     "test": "mocha -r ts-node/register test/**/*.test.ts --reporter spec --exit",
-    "Xpostinstall": "npm run compile"
+    "postinstall": "npm run compile"
   },
   "author": "",
   "license": "ISC",
