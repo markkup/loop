@@ -5,6 +5,7 @@ import appkit, { IAppkitConfig } from './lib/appkit';
 import auth from './lib/auth';
 import datetime from './lib/datetime';
 import firebase, { IFirebaseConfig } from './lib/firebase';
+import phones from './lib/phones';
 import push from './lib/push';
 import sms, { ITwilioConfig } from './lib/sms';
 import CustomerMessages from './repositories/CustomerMessages';
@@ -34,6 +35,7 @@ export class Loop {
 
     public readonly firebase = firebase;
     public readonly datetime = datetime;
+    public readonly phones = phones;
     public readonly auth = auth;
     public readonly push = push;
     public readonly sms = sms;

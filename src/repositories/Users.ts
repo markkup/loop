@@ -1,5 +1,6 @@
 import { IUser } from '../interfaces';
 import appkit from '../lib/appkit';
+import phones from '../lib/phones';
 import Repository from './Repository';
 
 class Users extends Repository<IUser> {
@@ -36,20 +37,6 @@ class Users extends Repository<IUser> {
         return users;
     }
 
-    public cleanPhone(phone: string): string {
-        if (!phone) {
-            return '';
-        }
-        // remove + and/or 1 from beginning
-        if (phone[0] === '+') {
-            phone = phone.substring(1);
-        }
-        if (phone[0] === '1') {
-            phone = phone.substring(1);
-        }
-        return phone.replace(/\D/g, '').substring(0, 10);
-    }
-
     public getNameInitials(name: string): string {
         let initials = '';
         if (name) {
@@ -64,24 +51,11 @@ class Users extends Repository<IUser> {
         return initials;
     }
 
-    public formatPhone(phone: string): string {
-        phone = this.cleanPhone(phone);
-        let num;
-        if (phone.length < 3) {
-            num = `(${phone}`;
-        } else if (phone.length < 6) {
-            num = `(${phone.substring(0, 3)}) ${phone.substring(3, 5)}`;
-        } else {
-            num = `(${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 10)}`;
-        }
-        return num;
-    }
-
     public add(displayName: string, bio: string, phone: string): Promise<any> {
         try {
             const user = {
                 phone,
-                phoneClean: this.cleanPhone(phone),
+                phoneClean: phones.clean(phone),
                 displayName,
                 initials: this.getNameInitials(displayName),
                 bio,
@@ -102,7 +76,7 @@ class Users extends Repository<IUser> {
 
     public async getByPhone(phone: string): Promise<IUser | null> {
         try {
-            phone = this.cleanPhone(phone);
+            phone = phones.clean(phone);
             const users = await this.getAllByChildValue('phoneClean', phone);
             if (users.length === 0) {
                 return null;

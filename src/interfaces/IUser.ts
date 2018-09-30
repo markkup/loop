@@ -12,4 +12,5 @@ export default interface IUser {
     permissions: string[];
     phone: string;
     phoneClean: string;
+    token?: string;
 }
