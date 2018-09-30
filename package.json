@@ -15,8 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "firebase": "4.12.1",
-    "typescript": "^3.0.1"
+    "firebase": "4.12.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
@@ -28,7 +27,8 @@
     "mocha": "^5.2.0",
     "node-fetch": "^2.2.0",
     "ts-node": "^7.0.1",
-    "tslint": "^5.11.0"
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
   },
   "appkit": {
     "modules": [],
