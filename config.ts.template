@@ -1,0 +1,25 @@
+import { IConfig } from './src';
+
+const config = {
+    appkit: {
+        platform: '',
+    },
+    firebase: {
+        apiKey: '',
+        authDomain: '',
+        databaseURL: '',
+        projectId: '',
+        storageBucket: '',
+        messagingSenderId: '',
+        cloudURL: '',
+        bundleId: '',
+        adminAuthKey: '',
+    },
+    twilio: {
+        accountSid: '',
+        authToken: '',
+        fromNumber: '',
+    },
+} as IConfig;
+
+export default config;
