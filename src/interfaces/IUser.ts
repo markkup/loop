@@ -13,4 +13,5 @@ export default interface IUser {
     phone: string;
     phoneClean: string;
     token?: string;
+    lastAccessDate?: number;
 }
