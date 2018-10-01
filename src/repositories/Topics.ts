@@ -1,11 +1,10 @@
-import appkit from '../lib/appkit';
 import { IRecordWatch } from '../lib/firebase/FirebaseRepository';
 import Repository from './Repository';
 
-class Notifications extends Repository {
+class Topics extends Repository {
 
     constructor() {
-        super('notifications');
+        super('topics');
     }
 
     public watchAllDesc(callback: (records: any[]) => void): IRecordWatch {
@@ -15,4 +14,4 @@ class Notifications extends Repository {
     }
 }
 
-export default Notifications;
+export default Topics;

@@ -1,7 +1,6 @@
-import appkit from '../lib/appkit';
 import FirebaseRepository, { IRecordWatch } from '../lib/firebase/FirebaseRepository';
 
-class UserNotifications {
+class UserTopics {
 
     protected firebaseRepo = new FirebaseRepository();
 
@@ -16,8 +15,8 @@ class UserNotifications {
     }
 
     protected formatNode(uid: string) {
-        return `userNotifications/${uid}`;
+        return `userTopics/${uid}`;
     }
 }
 
-export default UserNotifications;
+export default UserTopics;

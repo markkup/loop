@@ -11,10 +11,10 @@ import sms, { ITwilioConfig } from './lib/sms';
 import CustomerMessages from './repositories/CustomerMessages';
 import Customers from './repositories/Customers';
 import Dealerships from './repositories/Dealerships';
-import Notifications from './repositories/Notifications';
-import UserNotifications from './repositories/UserNotifications';
+import Topics from './repositories/Topics';
 import UserNotificationTokens from './repositories/UserNotificationTokens';
 import Users from './repositories/Users';
+import UserTopics from './repositories/UserTopics';
 
 export interface IConfig {
     appkit: IAppkitConfig;
@@ -43,8 +43,8 @@ export class Loop {
     // repositories
     public readonly users = new Users();
     public readonly dealerships = new Dealerships();
-    public readonly notifications = new Notifications();
-    public readonly userNotifications = new UserNotifications();
+    public readonly topics = new Topics();
+    public readonly userTopics = new UserTopics();
     public readonly userNotificationTokens = new UserNotificationTokens();
     public readonly customers = new Customers();
     public readonly customerMessages = new CustomerMessages();
