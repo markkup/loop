@@ -67,12 +67,6 @@ export class Auth {
     // throw if not valid
     public async ensureSignIn(uid: string, token: string): Promise<IUser> {
 
-        // get user record
-        const user = await Loop.users.get(uid);
-        if (!user || !user.allowAccess) {
-            throw new Error(`User is not recognized or is not allowed access`);
-        }
-
         try {
             await firebase.auth.signInWithCustomToken(token);
         } catch (e) {
@@ -88,10 +82,16 @@ export class Auth {
                 await firebase.auth.signInWithCustomToken(newToken);
 
                 // save new token
-                user.token = newToken;
+                token = newToken;
             } else {
                 throw e;
             }
+        }
+
+        // get user record
+        const user = await Loop.users.get(uid);
+        if (!user || !user.allowAccess) {
+            throw new Error(`User is not recognized or is not allowed access`);
         }
 
         return user;
