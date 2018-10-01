@@ -17,7 +17,7 @@ export class Auth {
         const uid = phones.clean(phoneNumber);
 
         // create and save code
-        const code = Math.floor(Math.random() * 900000) + 100000;
+        const code = (Math.floor(Math.random() * 900000) + 100000).toString();
         this.passcodeHash[uid] = code;
 
         // send sms
