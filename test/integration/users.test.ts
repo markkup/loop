@@ -18,22 +18,10 @@ describe('models/Users.js', () => {
         const updateResult = await Loop.users.update(getResult.uid, { bio: 'Manager' });
         expect(updateResult.bio).to.equal('Manager');
 
-        // get by phoneClean
-        const getByResult = await Loop.users.getByPhone('7172197355');
-        expect(getByResult.phoneClean).to.equal('7172197355');
-
         // delete user
         await Loop.users.delete(getResult.uid);
         const getDeletedResult = await Loop.users.get(getResult.uid);
         expect(getDeletedResult).to.be.null;
-    });
-
-    it('should get empty array when getByPhone finds nothing', async () => {
-
-        await Loop.init(config);
-
-        const getByResult = await Loop.users.getByPhone('7172846574');
-        expect(getByResult).to.be.null;
     });
 
 });

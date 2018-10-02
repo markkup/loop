@@ -55,13 +55,12 @@ class Users extends Repository<IUser> {
         try {
             const user = {
                 phone,
-                phoneClean: phones.clean(phone),
                 displayName,
                 initials: this.getNameInitials(displayName),
                 bio,
                 allowAccess: true,
             };
-            return this.insert(user, '');
+            return this.insert(user, phones.clean(phone));
         } catch (e) {
             appkit.logError(e);
             throw e;
@@ -72,25 +71,6 @@ class Users extends Repository<IUser> {
         const downloadUrl = await this.updateImage(uid, 'avatars', imageBlob);
         await this.update(uid, { avatarUrl: downloadUrl });
         return downloadUrl;
-    }
-
-    public async getByPhone(phone: string): Promise<IUser | null> {
-        try {
-            phone = phones.clean(phone);
-            const users = await this.getAllByChildValue('phoneClean', phone);
-            if (users.length === 0) {
-                return null;
-            } else {
-                return users[0];
-            }
-        } catch (e) {
-            appkit.logError(e, 'Users.getByPhone');
-            throw e;
-        }
-    }
-
-    public getAllByDealership(dealershipId: string): Promise<IUser[]> {
-        return this.getAllByChildValue('dealershipId', dealershipId);
     }
 }
 
