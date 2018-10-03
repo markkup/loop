@@ -59,7 +59,7 @@ class Users extends Repository<IUser> {
                 initials: this.getNameInitials(displayName),
                 bio,
                 allowAccess: true,
-            };
+            } as IUser;
             return this.insert(user, phones.clean(phone));
         } catch (e) {
             appkit.logError(e);

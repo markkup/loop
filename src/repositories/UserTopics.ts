@@ -10,6 +10,10 @@ class UserTopics {
         });
     }
 
+    public update(uid: string, key: string, props: any): Promise<any> {
+        return this.firebaseRepo.updateRecord(this.formatNode(uid), key, props);
+    }
+
     public delete(uid: string, key: string): Promise<void> {
         return this.firebaseRepo.deleteRecord(this.formatNode(uid), key);
     }
