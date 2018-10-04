@@ -46,7 +46,7 @@ export class Firebase {
         return firebase.auth();
     }
 
-    public get database() {
+    public database() {
         return firebase.database();
     }
 }
