@@ -45,6 +45,10 @@ export class Firebase {
     public get auth() {
         return firebase.auth();
     }
+
+    public get database() {
+        return firebase.database();
+    }
 }
 
 export default new Firebase();
