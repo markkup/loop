@@ -1,6 +1,6 @@
 import { CustomerState } from './enums/CustomerState';
 import { CustomerStatus } from './enums/CustomerStatus';
-import { ICustomer, IDealership, ILastMessage, IUser } from './interfaces';
+import { IChannel, ICustomer, ILastMessage, IUser } from './interfaces';
 import appkit, { IAppkitConfig } from './lib/appkit';
 import auth from './lib/auth';
 import datetime from './lib/datetime';
@@ -8,9 +8,9 @@ import firebase, { IFirebaseConfig } from './lib/firebase';
 import phones from './lib/phones';
 import push from './lib/push';
 import sms, { ITwilioConfig } from './lib/sms';
+import Channels from './repositories/Channels';
 import CustomerMessages from './repositories/CustomerMessages';
 import Customers from './repositories/Customers';
-import Dealerships from './repositories/Dealerships';
 import Topics from './repositories/Topics';
 import UserNotificationTokens from './repositories/UserNotificationTokens';
 import Users from './repositories/Users';
@@ -26,7 +26,7 @@ export {
     CustomerState,
     CustomerStatus,
     ICustomer,
-    IDealership,
+    IChannel,
     ILastMessage,
     IUser,
 };
@@ -42,7 +42,7 @@ export class Loop {
 
     // repositories
     public readonly users = new Users();
-    public readonly dealerships = new Dealerships();
+    public readonly channels = new Channels();
     public readonly topics = new Topics();
     public readonly userTopics = new UserTopics();
     public readonly userNotificationTokens = new UserNotificationTokens();
