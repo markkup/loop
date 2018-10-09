@@ -30,7 +30,7 @@ export class Datetime {
         return Math.floor(seconds) + ' sec';
     }
 
-    public formatDate(date: Date, format: string = 'MMM d', utc = true): string {
+    public formatDate(date: Date, format: string = 'MMM d', utc = false): string {
 
         // tslint:disable:max-line-length
         const MMMM = ['\x00', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
