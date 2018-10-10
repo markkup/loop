@@ -4,6 +4,10 @@ class UserTopics {
 
     protected firebaseRepo = new FirebaseRepository();
 
+    public watchByUser(uid: string, key: string, callback: (records: any[]) => void): IRecordWatch {
+        return this.firebaseRepo.watchRecord(this.formatNode(uid), key, callback);
+    }
+
     public watchAllByUser(uid: string, callback: (records: any[]) => void): IRecordWatch {
         return this.firebaseRepo.watchRecords(this.formatNode(uid), callback, (ref) => {
             return ref.orderByChild('order');
