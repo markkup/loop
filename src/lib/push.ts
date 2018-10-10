@@ -8,12 +8,6 @@ export class Push {
         try {
             uid = '' + uid;
 
-            appkit.log({
-                uid,
-                token,
-                platform: appkit.platform,
-            });
-
             if (!uid) {
                 throw new Error(`uid is required`);
             }
@@ -31,26 +25,20 @@ export class Push {
                 }
             }
 
-            appkit.log(`token=${token}`);
-
             const userNotificationTokens = new UserNotificationTokens();
             const tokenUpdates = {} as any;
 
             // remove token from everywhere
             const userTokens = await userNotificationTokens.getAllRaw();
             Object.keys(userTokens).forEach(userTokenKey => {
-                appkit.log(`userTokenKey=${userTokenKey}`);
                 const userToken = userTokens[userTokenKey];
                 Object.keys(userToken).forEach(tokenKey => {
-                    appkit.log(`tokenKey=${tokenKey}`);
                     if (tokenKey === token) {
                         userToken[tokenKey] = null;
                         tokenUpdates[userTokenKey] = userToken;
                     }
                 });
             });
-
-            appkit.log(JSON.stringify(tokenUpdates));
 
             // add our new token
             if (tokenUpdates[uid] === undefined) {
@@ -61,8 +49,6 @@ export class Push {
                 }
             }
             tokenUpdates[uid][token] = true;
-
-            appkit.log(JSON.stringify(tokenUpdates));
 
             // commit updates
             await userNotificationTokens.updateAll(tokenUpdates);
