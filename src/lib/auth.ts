@@ -40,7 +40,7 @@ export class Auth {
             }
 
             // get jwt
-            const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}`);
+            const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}&reason=signin`);
             const token = data.token;
             if (!token) {
                 throw new Error(`User token could not be created`);
@@ -76,7 +76,7 @@ export class Auth {
         } catch (e) {
             if (e.message === 'TOKEN_EXPIRED') {
                 // get jwt
-                const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}`);
+                const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}&reason=expired`);
                 const newToken = data.token;
                 if (!newToken) {
                     throw new Error(`User token could not be created`);
