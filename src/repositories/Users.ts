@@ -13,6 +13,19 @@ class Users extends Repository<IUser> {
         super('users', 'uid');
     }
 
+    public getByPhone(phone: string): Promise<IUser | null> {
+        const phoneClean = phones.clean(phone);
+        return this.getByPhoneClean(phoneClean);
+    }
+
+    public async getByPhoneClean(phoneClean: string): Promise<IUser | null> {
+        const results = await this.getAllByChildValue('phoneClean', phoneClean);
+        if (results && results.length > 0) {
+            return results[0];
+        }
+        return null;
+    }
+
     public roleToDisplayName(role: string) {
         const index = this.roles.findIndex(r => r === role);
         if (index === -1) {
@@ -55,12 +68,13 @@ class Users extends Repository<IUser> {
         try {
             const user = {
                 phone,
+                phoneClean: phones.clean(phone),
                 displayName,
                 initials: this.getNameInitials(displayName),
                 bio,
                 allowAccess: true,
             } as IUser;
-            return this.insert(user, phones.clean(phone));
+            return this.insert(user);
         } catch (e) {
             appkit.logError(e);
             throw e;

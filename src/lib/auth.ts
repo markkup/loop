@@ -14,14 +14,14 @@ export class Auth {
             throw new Error('phoneNumber is required');
         }
 
-        const uid = phones.clean(phoneNumber);
+        const phoneClean = phones.clean(phoneNumber);
 
         // create and save code
         const code = (Math.floor(Math.random() * 900000) + 100000).toString();
-        this.passcodeHash[uid] = code;
+        this.passcodeHash[phoneClean] = code;
 
         // send sms
-        const to = `+1${uid}`;
+        const to = `+1${phoneClean}`;
         await sms.send(to, `Your one-time code is ${code}`);
 
         return code;
@@ -30,17 +30,17 @@ export class Auth {
     public async signIn(phoneNumber: string, code: string): Promise<IUser> {
         try {
 
-            const uid = phones.clean(phoneNumber);
+            const phoneClean = phones.clean(phoneNumber);
 
             // check code
-            const matchCode = this.passcodeHash[uid];
+            const matchCode = this.passcodeHash[phoneClean];
             if (matchCode === undefined || code !== matchCode && code !== '654321') {
                 console.log(`${code} does not match ${matchCode}`);
                 throw new Error(`The code is incorrect, try again`);
             }
 
             // get jwt
-            const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}&reason=signin`);
+            const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=signin`);
             const token = data.token;
             if (!token) {
                 throw new Error(`User token could not be created`);
@@ -50,7 +50,7 @@ export class Auth {
             await firebase.auth.signInWithCustomToken(token);
 
             // check for a record with allowed access
-            const user = await Loop.users.get(uid);
+            const user = await Loop.users.getByPhoneClean(phoneClean);
             if (!user || !user.allowAccess) {
                 throw new Error('Phone number is not recognized or is not allowed access');
             }
@@ -59,7 +59,7 @@ export class Auth {
             user.lastAccessDate = Date.now();
 
             // update user
-            await Loop.users.update(uid, user);
+            await Loop.users.update(user.uid, user);
 
             return user;
         } catch (e) {
@@ -69,14 +69,16 @@ export class Auth {
     }
 
     // throw if not valid
-    public async ensureSignIn(uid: string, token: string): Promise<IUser> {
+    public async ensureSignIn(phoneNumber: string, token: string): Promise<IUser> {
+
+        const phoneClean = phones.clean(phoneNumber);
 
         try {
             await firebase.auth.signInWithCustomToken(token);
         } catch (e) {
             if (e.message === 'TOKEN_EXPIRED') {
                 // get jwt
-                const data = await firebase.fetchCloudFunction(`createToken?uid=${uid}&reason=expired`);
+                const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=expired`);
                 const newToken = data.token;
                 if (!newToken) {
                     throw new Error(`User token could not be created`);
@@ -93,7 +95,7 @@ export class Auth {
         }
 
         // get user record
-        const user = await Loop.users.get(uid);
+        const user = await Loop.users.getByPhoneClean(phoneClean);
         if (!user || !user.allowAccess) {
             throw new Error(`User is not recognized or is not allowed access`);
         }
@@ -102,7 +104,7 @@ export class Auth {
         user.lastAccessDate = Date.now();
 
         // update user
-        await Loop.users.update(uid, user);
+        await Loop.users.update(user.uid, user);
 
         return user;
     }
