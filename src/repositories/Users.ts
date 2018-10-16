@@ -9,8 +9,21 @@ class Users extends Repository<IUser> {
     public roles: string[] = ['admin', 'exec', 'mgr', 'rep'];
     public roleNames: string[] = ['Admin', 'Executive', 'Manager', 'Rep'];
 
+    protected userCache: { [index: string]: IUser } = {};
+
     constructor() {
         super('users', 'uid');
+    }
+
+    public findUser(uid: string): Promise<IUser> {
+        if (this.userCache[uid]) {
+            return Promise.resolve(this.userCache[uid]);
+        }
+        return this.get(uid)
+            .then(user => {
+                this.userCache[uid] = user;
+                return user;
+            });
     }
 
     public getByPhone(phone: string): Promise<IUser | null> {
