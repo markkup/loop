@@ -15,7 +15,7 @@ class Users extends Repository<IUser> {
         super('users', 'uid');
     }
 
-    public findUser(uid: string): Promise<IUser> {
+    public find(uid: string): Promise<IUser> {
         if (this.userCache[uid]) {
             return Promise.resolve(this.userCache[uid]);
         }
