@@ -82,9 +82,11 @@ export class Auth {
         console.log({ phoneClean, currentUser: firebase.auth.currentUser, token });
 
         try {
-            const res = await firebase.auth.signInWithCustomToken(token);
+            /* const res = await firebase.auth.signInWithCustomToken(token);
             Object.keys(res).forEach(k => console.log(`${k}=${res[k]}`));
-            console.log({ res });
+            console.log({ res });*/
+            const resuser = await this.signinAndWaitForAuth(token);
+            console.log({ resuser });
             console.log({ currentUser: firebase.auth.currentUser });
         } catch (e) {
             console.log(`signInWithCustomToken exception: ${e.message || e}`);
@@ -108,8 +110,8 @@ export class Auth {
             }
         }
 
-        console.log('sleeping');
-        await this.sleep(3000);
+        // console.log('sleeping');
+        // await this.sleep(3000);
         console.log('getByPhoneClean');
 
         // get user record
@@ -131,6 +133,23 @@ export class Auth {
 
     public signOut() {
         return firebase.auth.signOut();
+    }
+
+    protected signinAndWaitForAuth(token: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+
+            const remove = firebase.auth.onAuthStateChanged((user) => {
+                resolve(user);
+            }, (err) => {
+                reject(err);
+            });
+
+            try {
+                const res = firebase.auth.signInWithCustomToken(token);
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 }
 
