@@ -77,7 +77,7 @@ export class Auth {
 
         try {
             const res = await firebase.auth.signInWithCustomToken(token);
-            Object.keys(res).forEach(k => console.log(`k=${res[k]}`));
+            Object.keys(res).forEach(k => console.log(`${k}=${JSON.stringify(res[k])}`));
             console.log({ res });
             console.log({ currentUser: firebase.auth.currentUser });
         } catch (e) {
