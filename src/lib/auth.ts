@@ -114,7 +114,24 @@ export class Auth {
         console.log('getByPhoneClean');
 
         // get user record
-        let user;
+        const user = await Loop.users.getByPhoneClean(phoneClean);
+        if (!user || !user.allowAccess) {
+            throw new Error(`User is not recognized or is not allowed access`);
+        }
+
+        console.log('updateing', { user });
+
+        user.token = token;
+        user.lastAccessDate = Date.now();
+
+        // update user
+        await Loop.users.update(user.uid, user);
+
+        console.log('returning');
+
+        return user;
+
+        /*let user;
         while (!user) {
             try {
                 user = await Loop.users.getByPhoneClean(phoneClean);
@@ -141,7 +158,7 @@ export class Auth {
                 console.log(`permission denied, trying again`);
                 await this.sleep(5);
             }
-        }
+        }*/
     }
 
     public signOut() {
