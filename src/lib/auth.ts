@@ -139,9 +139,13 @@ export class Auth {
         return new Promise((resolve, reject) => {
 
             const remove = firebase.auth.onAuthStateChanged((user) => {
-                remove();
-                resolve(user);
+                console.log('auth changed', { user });
+                if (user) {
+                    remove();
+                    resolve(user);
+                }
             }, (err) => {
+                console.log('auth err', { err });
                 remove();
                 reject(err);
             });
@@ -149,6 +153,7 @@ export class Auth {
             try {
                 const res = firebase.auth.signInWithCustomToken(token);
             } catch (e) {
+                console.log('auth ex', { e });
                 reject(e);
             } finally {
                 remove();
