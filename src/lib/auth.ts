@@ -73,10 +73,11 @@ export class Auth {
 
         const phoneClean = phones.clean(phoneNumber);
 
-        console.log({ phoneClean, token });
+        console.log({ phoneClean, token, currentUser: firebase.auth.currentUser });
 
         try {
-            await firebase.auth.signInWithCustomToken(token);
+            const res = await firebase.auth.signInWithCustomToken(token);
+            console.log({ res });
         } catch (e) {
             console.log(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
