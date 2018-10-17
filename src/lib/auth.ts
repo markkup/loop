@@ -73,7 +73,7 @@ export class Auth {
 
         const phoneClean = phones.clean(phoneNumber);
 
-        console.log({ phoneClean, token, currentUser: firebase.auth.currentUser });
+        console.log({ phoneClean, currentUser: firebase.auth.currentUser, token });
 
         try {
             const res = await firebase.auth.signInWithCustomToken(token);
