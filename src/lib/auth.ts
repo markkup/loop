@@ -132,7 +132,6 @@ export class Auth {
 
                 console.log('returning');
 
-                return user;
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
                     console.log('got error reading user', { e });
@@ -142,6 +141,7 @@ export class Auth {
                 await this.delay(5);
             }
         }
+        return user;
     }
 
     public signOut() {
