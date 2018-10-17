@@ -47,6 +47,9 @@ export class Profile {
     public async login(code: string): Promise<IUser> {
         const user = await Loop.auth.signIn(code);
         this.currentUser = user;
+        if (this.profileListener) {
+            this.profileListener(undefined, true, user);
+        }
         return user;
     }
 
