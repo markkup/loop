@@ -73,9 +73,12 @@ export class Auth {
 
         const phoneClean = phones.clean(phoneNumber);
 
+        console.log({ phoneClean, token });
+
         try {
             await firebase.auth.signInWithCustomToken(token);
         } catch (e) {
+            console.log(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
                 // get jwt
                 const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=expired`);
@@ -83,6 +86,8 @@ export class Auth {
                 if (!newToken) {
                     throw new Error(`User token could not be created`);
                 }
+
+                console.log('signInWithCustomToken again');
 
                 // auth
                 await firebase.auth.signInWithCustomToken(newToken);
@@ -94,11 +99,15 @@ export class Auth {
             }
         }
 
+        console.log('getByPhoneClean');
+
         // get user record
         const user = await Loop.users.getByPhoneClean(phoneClean);
         if (!user || !user.allowAccess) {
             throw new Error(`User is not recognized or is not allowed access`);
         }
+
+        console.log('updateing');
 
         user.token = token;
         user.lastAccessDate = Date.now();
