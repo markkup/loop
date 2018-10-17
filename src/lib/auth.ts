@@ -110,8 +110,8 @@ export class Auth {
             }
         }
 
-        // console.log('sleeping');
-        // await this.sleep(3000);
+        console.log('sleeping');
+        await this.sleep(500);
         console.log('getByPhoneClean');
 
         // get user record
