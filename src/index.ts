@@ -8,6 +8,7 @@ import firebase, { IFirebaseConfig } from './lib/firebase';
 import phones from './lib/phones';
 import push from './lib/push';
 import sms, { ITwilioConfig } from './lib/sms';
+import tracing from './lib/tracing';
 import Channels from './repositories/Channels';
 import CustomerMessages from './repositories/CustomerMessages';
 import Customers from './repositories/Customers';
@@ -58,6 +59,7 @@ export class Loop {
     public init(config: IConfig) {
         firebase.init(config.firebase);
         appkit.init(config.appkit);
+        tracing.init(config.appkit.tracing);
         sms.init(config.twilio);
         this.loopconfig = config;
     }

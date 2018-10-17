@@ -1,5 +1,10 @@
+export interface IAppkitTracingConfig {
+    keys?: string[];
+}
+
 export interface IAppkitConfig {
     platform: string;
+    tracing?: IAppkitTracingConfig;
 }
 
 class Appkit {

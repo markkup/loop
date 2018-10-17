@@ -4,6 +4,9 @@ import appkit from './appkit';
 import firebase from './firebase';
 import phones from './phones';
 import sms from './sms';
+import tracing from './tracing';
+
+const trace = tracing.with('auth');
 
 export class Auth {
 
@@ -35,7 +38,7 @@ export class Auth {
             // check code
             const matchCode = this.passcodeHash[phoneClean];
             if (matchCode === undefined || code !== matchCode && code !== '654321') {
-                console.log(`${code} does not match ${matchCode}`);
+                trace(`${code} does not match ${matchCode}`);
                 throw new Error(`The code is incorrect, try again`);
             }
 
@@ -79,17 +82,17 @@ export class Auth {
 
         const phoneClean = phones.clean(phoneNumber);
 
-        console.log({ phoneClean, currentUser: firebase.auth.currentUser, token });
+        trace({ phoneClean, currentUser: firebase.auth.currentUser, token });
 
         try {
             const res = await firebase.auth.signInWithCustomToken(token);
-            console.log({ res });
+            trace({ res });
             /*const resuser = await this.signinAndWaitForAuth(token);
             await this.delay();
-            console.log({ resuser });*/
-            console.log({ currentUser: firebase.auth.currentUser });
+            trace({ resuser });*/
+            trace({ currentUser: firebase.auth.currentUser });
         } catch (e) {
-            console.log(`signInWithCustomToken exception: ${e.message || e}`);
+            trace(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
                 // get jwt
                 const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=expired`);
@@ -98,7 +101,7 @@ export class Auth {
                     throw new Error(`User token could not be created`);
                 }
 
-                console.log('signInWithCustomToken again');
+                trace('signInWithCustomToken again');
 
                 // auth
                 await firebase.auth.signInWithCustomToken(newToken);
@@ -110,9 +113,9 @@ export class Auth {
             }
         }
 
-        // console.log('delaying');
+        // trace('delaying');
         // await this.delay(500);
-        console.log('getByPhoneClean');
+        trace('getByPhoneClean');
 
         let user;
         while (!user) {
@@ -122,7 +125,7 @@ export class Auth {
                     throw new Error(`User is not recognized or is not allowed access`);
                 }
 
-                console.log('updateing', { user });
+                trace('updateing', { user });
 
                 user.token = token;
                 user.lastAccessDate = Date.now();
@@ -130,14 +133,14 @@ export class Auth {
                 // update user
                 await Loop.users.update(user.uid, user);
 
-                console.log('returning');
+                trace('returning');
 
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
-                    console.log('got error reading user', { e });
+                    trace('got error reading user', { e });
                     throw e;
                 }
-                console.log(`permission denied, trying again`);
+                trace(`permission denied, trying again`);
                 await this.delay(5);
             }
         }
@@ -152,13 +155,13 @@ export class Auth {
         return new Promise((resolve, reject) => {
 
             const remove = firebase.auth.onAuthStateChanged((user) => {
-                console.log('auth changed', { user });
+                trace('auth changed', { user });
                 if (user) {
                     remove();
                     resolve(user);
                 }
             }, (err) => {
-                console.log('auth err', { err });
+                trace('auth err', { err });
                 remove();
                 reject(err);
             });
@@ -166,7 +169,7 @@ export class Auth {
             try {
                 const res = firebase.auth.signInWithCustomToken(token);
             } catch (e) {
-                console.log('auth ex', { e });
+                trace('auth ex', { e });
                 reject(e);
             }
         });
