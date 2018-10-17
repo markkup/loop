@@ -68,6 +68,12 @@ export class Auth {
         }
     }
 
+    public sleep(ms: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, ms);
+        });
+    }
+
     // throw if not valid
     public async ensureSignIn(phoneNumber: string, token: string): Promise<IUser> {
 
@@ -102,6 +108,8 @@ export class Auth {
             }
         }
 
+        console.log('sleeping');
+        await this.sleep(3000);
         console.log('getByPhoneClean');
 
         // get user record
