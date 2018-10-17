@@ -127,6 +127,7 @@ export class Auth {
                     throw e;
                 }
                 console.log(`permission denied, trying again`);
+                await this.sleep(5);
             }
         }
 
