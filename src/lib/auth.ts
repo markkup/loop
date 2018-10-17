@@ -10,7 +10,8 @@ const trace = tracing.with('auth');
 
 export class Auth {
 
-    protected passcodeHash: any = {};
+    protected lastPasscode: string = '';
+    protected lastPhone: string = '';
 
     public async sendPasscode(phoneNumber: string) {
         if (!phoneNumber) {
@@ -21,7 +22,8 @@ export class Auth {
 
         // create and save code
         const code = (Math.floor(Math.random() * 900000) + 100000).toString();
-        this.passcodeHash[phoneClean] = code;
+        this.lastPasscode = code;
+        this.lastPhone = phoneClean;
 
         // send sms
         const to = `+1${phoneClean}`;
@@ -30,14 +32,14 @@ export class Auth {
         return code;
     }
 
-    public async signIn(phoneNumber: string, code: string): Promise<IUser> {
+    public async signIn(code: string): Promise<IUser> {
         try {
 
-            const phoneClean = phones.clean(phoneNumber);
+            const phoneClean = this.lastPhone;
 
             // check code
-            const matchCode = this.passcodeHash[phoneClean];
-            if (matchCode === undefined || code !== matchCode && code !== '654321') {
+            const matchCode = this.lastPasscode;
+            if (code !== matchCode && code !== '654321') {
                 trace(`${code} does not match ${matchCode}`);
                 throw new Error(`The code is incorrect, try again`);
             }

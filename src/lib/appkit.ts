@@ -40,6 +40,10 @@ class Appkit {
             });
         }
     }
+
+    public get network() {
+        return this.context.Network;
+    }
 }
 
 export default new Appkit();

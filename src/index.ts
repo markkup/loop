@@ -6,6 +6,7 @@ import auth from './lib/auth';
 import datetime from './lib/datetime';
 import firebase, { IFirebaseConfig } from './lib/firebase';
 import phones from './lib/phones';
+import profile from './lib/profile';
 import push from './lib/push';
 import sms, { ITwilioConfig } from './lib/sms';
 import tracing from './lib/tracing';
@@ -40,6 +41,7 @@ export class Loop {
     public readonly auth = auth;
     public readonly push = push;
     public readonly sms = sms;
+    public readonly profile = profile;
 
     // repositories
     public readonly users = new Users();
