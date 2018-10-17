@@ -68,7 +68,7 @@ export class Auth {
         }
     }
 
-    public sleep(ms: number): Promise<void> {
+    public delay(ms: number = 1): Promise<void> {
         return new Promise((resolve, reject) => {
             setTimeout(resolve, ms);
         });
@@ -85,6 +85,7 @@ export class Auth {
             const res = await firebase.auth.signInWithCustomToken(token);
             console.log({ res });
             /*const resuser = await this.signinAndWaitForAuth(token);
+            await this.delay();
             console.log({ resuser });*/
             console.log({ currentUser: firebase.auth.currentUser });
         } catch (e) {
@@ -109,29 +110,11 @@ export class Auth {
             }
         }
 
-        // console.log('sleeping');
-        // await this.sleep(500);
+        // console.log('delaying');
+        // await this.delay(500);
         console.log('getByPhoneClean');
 
-        // get user record
-        const user = await Loop.users.getByPhoneClean(phoneClean);
-        if (!user || !user.allowAccess) {
-            throw new Error(`User is not recognized or is not allowed access`);
-        }
-
-        console.log('updateing', { user });
-
-        user.token = token;
-        user.lastAccessDate = Date.now();
-
-        // update user
-        await Loop.users.update(user.uid, user);
-
-        console.log('returning');
-
-        return user;
-
-        /*let user;
+        let user;
         while (!user) {
             try {
                 user = await Loop.users.getByPhoneClean(phoneClean);
@@ -156,9 +139,9 @@ export class Auth {
                     throw e;
                 }
                 console.log(`permission denied, trying again`);
-                await this.sleep(5);
+                await this.delay(5);
             }
-        }*/
+        }
     }
 
     public signOut() {
