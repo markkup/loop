@@ -121,6 +121,18 @@ export class Auth {
                 if (!user || !user.allowAccess) {
                     throw new Error(`User is not recognized or is not allowed access`);
                 }
+
+                console.log('updateing', { user });
+
+                user.token = token;
+                user.lastAccessDate = Date.now();
+
+                // update user
+                await Loop.users.update(user.uid, user);
+
+                console.log('returning');
+
+                return user;
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
                     console.log('got error reading user', { e });
@@ -130,17 +142,6 @@ export class Auth {
                 await this.sleep(5);
             }
         }
-
-        console.log('updateing', { user });
-
-        user.token = token;
-        user.lastAccessDate = Date.now();
-
-        // update user
-        await Loop.users.update(user.uid, user);
-
-        return user;
-
     }
 
     public signOut() {
