@@ -77,7 +77,9 @@ export class Auth {
 
         try {
             const res = await firebase.auth.signInWithCustomToken(token);
+            Object.keys(res).forEach(k => console.log(`k=${res[k]}`));
             console.log({ res });
+            console.log({ currentUser: firebase.auth.currentUser });
         } catch (e) {
             console.log(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
