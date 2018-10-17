@@ -155,8 +155,6 @@ export class Auth {
             } catch (e) {
                 console.log('auth ex', { e });
                 reject(e);
-            } finally {
-                remove();
             }
         });
     }
