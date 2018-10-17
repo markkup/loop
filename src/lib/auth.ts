@@ -82,11 +82,10 @@ export class Auth {
         console.log({ phoneClean, currentUser: firebase.auth.currentUser, token });
 
         try {
-            /* const res = await firebase.auth.signInWithCustomToken(token);
-            Object.keys(res).forEach(k => console.log(`${k}=${res[k]}`));
-            console.log({ res });*/
-            const resuser = await this.signinAndWaitForAuth(token);
-            console.log({ resuser });
+            const res = await firebase.auth.signInWithCustomToken(token);
+            console.log({ res });
+            /*const resuser = await this.signinAndWaitForAuth(token);
+            console.log({ resuser });*/
             console.log({ currentUser: firebase.auth.currentUser });
         } catch (e) {
             console.log(`signInWithCustomToken exception: ${e.message || e}`);
@@ -124,6 +123,7 @@ export class Auth {
                 }
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
+                    console.log('got error reading user', { e });
                     throw e;
                 }
                 console.log(`permission denied, trying again`);
@@ -131,7 +131,7 @@ export class Auth {
             }
         }
 
-        console.log('updateing');
+        console.log('updateing', { user });
 
         user.token = token;
         user.lastAccessDate = Date.now();
