@@ -69,7 +69,7 @@ export class Profile extends EventEmitter {
     }
 
     protected fireChanged(user: IUser | null): void {
-        trace('profile changed');
+        trace(`profile changed - ${user ? '' : 'NOT'} logged in`);
         this.emit('changed', user);
     }
 
@@ -89,14 +89,19 @@ export class Profile extends EventEmitter {
 
     protected async ensureLoggedIn(): Promise<IUser | null> {
         if (!this.currentUser || !this.currentUser.token) {
+            this.fireChanged(null);
             return null;
         }
+
+        let user: IUser | null = null;
         try {
-            return await Loop.auth.ensureSignIn(this.currentUser.phone, this.currentUser.token);
+            user = await Loop.auth.ensureSignIn(this.currentUser.phone, this.currentUser.token);
         } catch (e) {
             appkit.logError(e, 'ensureLoggedIn');
         }
-        return null;
+
+        this.fireChanged(user);
+        return user;
     }
 
     protected networkChanged(connectionState: string) {

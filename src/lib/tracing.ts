@@ -13,7 +13,7 @@ export class Tracing {
     public with(key: string): TraceFunction {
         return (...args: any[]) => {
             if (this.keys.includes(key)) {
-                console.log(key, args);
+                console.log([key, ...args]);
             }
         };
     }
