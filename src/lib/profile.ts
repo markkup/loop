@@ -69,6 +69,7 @@ export class Profile extends EventEmitter {
     }
 
     protected fireChanged(user: IUser | null): void {
+        trace('profile changed');
         this.emit('changed', user);
     }
 

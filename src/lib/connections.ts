@@ -4,6 +4,9 @@ import UserConnections from '../repositories/UserConnections';
 import Users from '../repositories/Users';
 import { IRecordWatch } from './firebase/FirebaseRepository';
 import profile from './profile';
+import tracing from './tracing';
+
+const trace = tracing.with('connections');
 
 export class Connections {
 
@@ -14,13 +17,20 @@ export class Connections {
     protected userCache: { [index: string]: IUser | null } = {};
 
     public init() {
+        trace('connections initialized');
 
         // listen for profile changes
         profile.on('change', (user: IUser) => {
+            trace(`profile changed: ${user && user.uid}`);
+
             this.clearConnectionListener();
             if (user) {
+                trace('creating connection listener');
+
                 const userConnectionsRepo = new UserConnections();
                 this.connectionsListener = userConnectionsRepo.watch(user.uid, async (connections) => {
+                    trace(`connections updated`);
+
                     this.rawConnections = connections;
                     if (connections.friends) {
                         this.friendsArray = Object.keys(connections.friends).map(uid => uid);
