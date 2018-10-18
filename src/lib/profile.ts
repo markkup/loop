@@ -13,11 +13,12 @@ export interface IProfileWatch {
     listener: ProfileWatchFunction;
 }
 
-export class Profile extends EventEmitter {
+export class Profile {
 
     protected profileListener: ProfileWatchFunction | null = null;
     protected currentUser: IUser | null = null;
     protected changeListener: any = null;
+    protected eventEmitter = new EventEmitter();
 
     public watch(user: IUser, listener: ProfileWatchFunction): IProfileWatch | null {
 
@@ -48,7 +49,7 @@ export class Profile extends EventEmitter {
     public async login(code: string): Promise<IUser> {
         const user = await Loop.auth.signIn(code);
         this.currentUser = user;
-        this.fireChanged(user);
+        this.fireLoginStateChanged(user);
         if (this.profileListener) {
             this.profileListener(undefined, true, user);
         }
@@ -58,7 +59,7 @@ export class Profile extends EventEmitter {
     public async logout(): Promise<void> {
         await Loop.auth.signOut();
         this.currentUser = null;
-        this.fireChanged(null);
+        this.fireLoginStateChanged(null);
         if (this.profileListener) {
             this.profileListener(undefined, true, null);
         }
@@ -68,9 +69,13 @@ export class Profile extends EventEmitter {
         return this.currentUser;
     }
 
-    protected fireChanged(user: IUser | null): void {
-        trace(`profile changed - ${user ? '' : 'NOT'} logged in`);
-        this.emit('changed', user);
+    public on(event: string, cb: any) {
+        this.eventEmitter.on(event, cb);
+    }
+
+    protected fireLoginStateChanged(user: IUser | null): void {
+        trace(`login state changed: ${user ? '' : 'NOT'} logged in`);
+        this.eventEmitter.emit('login-changed', user);
     }
 
     protected async validateProfileState() {
@@ -89,7 +94,7 @@ export class Profile extends EventEmitter {
 
     protected async ensureLoggedIn(): Promise<IUser | null> {
         if (!this.currentUser || !this.currentUser.token) {
-            this.fireChanged(null);
+            this.fireLoginStateChanged(null);
             return null;
         }
 
@@ -100,7 +105,7 @@ export class Profile extends EventEmitter {
             appkit.logError(e, 'ensureLoggedIn');
         }
 
-        this.fireChanged(user);
+        this.fireLoginStateChanged(user);
         return user;
     }
 
@@ -118,7 +123,7 @@ export class Profile extends EventEmitter {
         if (this.currentUser) {
             this.changeListener = Loop.users.watch(this.currentUser.uid, user => {
                 if (user) {
-                    trace(`profile changed: ${user.uid}`);
+                    trace(`changed: ${user.uid}`);
                     if (this.profileListener) {
                         this.profileListener(undefined, true, user);
                     }

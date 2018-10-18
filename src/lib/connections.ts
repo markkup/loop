@@ -20,8 +20,8 @@ export class Connections {
         trace('connections initialized');
 
         // listen for profile changes
-        profile.on('change', (user: IUser) => {
-            trace(`profile changed: ${user && user.uid}`);
+        profile.on('login-changed', (user: IUser) => {
+            trace(`profile login-changed: ${user && user.uid}`);
 
             this.clearConnectionListener();
             if (user) {
