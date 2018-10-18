@@ -39,9 +39,11 @@ export class Connections {
                     if (connections.groups) {
                         for (const key in connections.group) {
                             if (key) {
+                                trace(`loading group ${key}`);
                                 const groupsRepo = new Groups();
                                 const group = await groupsRepo.get(key);
                                 if (group) {
+                                    trace(`got group ${key}`);
                                     this.groupsArray.push(group);
                                 }
                             }
