@@ -37,13 +37,13 @@ export class Connections {
                     }
                     this.groupsArray = [];
                     if (connections.groups) {
-                        for (const key in connections.group) {
+                        for (const key in connections.groups) {
                             if (key) {
                                 trace(`loading group ${key}`);
                                 const groupsRepo = new Groups();
                                 const group = await groupsRepo.get(key);
                                 if (group) {
-                                    trace(`got group ${key}`);
+                                    trace(`got group ${group}`);
                                     this.groupsArray.push(group);
                                 }
                             }
