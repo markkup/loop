@@ -1,8 +1,9 @@
 import { CustomerState } from './enums/CustomerState';
 import { CustomerStatus } from './enums/CustomerStatus';
-import { IChannel, ICustomer, ILastMessage, IUser } from './interfaces';
+import { IChannel, ICustomer, IGroup, ILastMessage, IUser } from './interfaces';
 import appkit, { IAppkitConfig } from './lib/appkit';
 import auth from './lib/auth';
+import connections from './lib/connections';
 import datetime from './lib/datetime';
 import firebase, { IFirebaseConfig } from './lib/firebase';
 import phones from './lib/phones';
@@ -29,6 +30,7 @@ export {
     CustomerStatus,
     ICustomer,
     IChannel,
+    IGroup,
     ILastMessage,
     IUser,
 };
@@ -42,6 +44,7 @@ export class Loop {
     public readonly push = push;
     public readonly sms = sms;
     public readonly profile = profile;
+    public readonly connections = connections;
 
     // repositories
     public readonly users = new Users();
@@ -62,6 +65,7 @@ export class Loop {
         firebase.init(config.firebase);
         appkit.init(config.appkit);
         tracing.init(config.appkit.tracing);
+        connections.init();
         sms.init(config.twilio);
         this.loopconfig = config;
     }

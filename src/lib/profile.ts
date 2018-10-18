@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import Loop from '..';
 import { IUser } from '../interfaces';
 import appkit from './appkit';
@@ -12,7 +13,7 @@ export interface IProfileWatch {
     listener: ProfileWatchFunction;
 }
 
-export class Profile {
+export class Profile extends EventEmitter {
 
     protected profileListener: ProfileWatchFunction | null = null;
     protected currentUser: IUser | null = null;
@@ -47,6 +48,7 @@ export class Profile {
     public async login(code: string): Promise<IUser> {
         const user = await Loop.auth.signIn(code);
         this.currentUser = user;
+        this.fireChanged(user);
         if (this.profileListener) {
             this.profileListener(undefined, true, user);
         }
@@ -56,9 +58,18 @@ export class Profile {
     public async logout(): Promise<void> {
         await Loop.auth.signOut();
         this.currentUser = null;
+        this.fireChanged(null);
         if (this.profileListener) {
             this.profileListener(undefined, true, null);
         }
+    }
+
+    public get user(): IUser | null {
+        return this.currentUser;
+    }
+
+    protected fireChanged(user: IUser | null): void {
+        this.emit('changed', user);
     }
 
     protected async validateProfileState() {
