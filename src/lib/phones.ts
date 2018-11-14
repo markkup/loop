@@ -4,6 +4,7 @@ export class Phones {
         if (!phoneNumber) {
             return '';
         }
+
         // remove + and/or 1 from beginning
         if (phoneNumber[0] === '+') {
             phoneNumber = phoneNumber.substring(1);
@@ -11,7 +12,12 @@ export class Phones {
         if (phoneNumber[0] === '1') {
             phoneNumber = phoneNumber.substring(1);
         }
+
         return phoneNumber.replace(/\D/g, '').substring(0, 10);
+    }
+
+    public isValid(phoneNumber: string): boolean {
+        return this.clean(phoneNumber).length === 10;
     }
 
     public format(phoneNumber: string): string {
