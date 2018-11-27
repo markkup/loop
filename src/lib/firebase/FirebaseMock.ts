@@ -12,8 +12,8 @@ class FirebaseMock implements IFirebase {
             if (firebase.apps && firebase.apps.length > 0) {
                 return;
             }
-            const FirebaseServer = require('firebase-server');
-            new FirebaseServer(5000, 'localhost', null);
+            // const FirebaseServer = require('firebase-server');
+            // new FirebaseServer(5000, 'localhost', null);
             this.config = config;
             await firebase.initializeApp({
                 databaseURL: `ws://localhost:5000`,
