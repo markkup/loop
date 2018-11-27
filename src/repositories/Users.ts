@@ -1,6 +1,7 @@
 import { IUser } from '../interfaces';
 import appkit from '../lib/appkit';
 import phones from '../lib/phones';
+import UserTransformer from '../transformers/UserTransformer';
 import Repository from './Repository';
 
 class Users extends Repository<IUser> {
@@ -10,7 +11,7 @@ class Users extends Repository<IUser> {
     public roleNames: string[] = ['Admin', 'Executive', 'Manager', 'Rep'];
 
     constructor() {
-        super('users', 'uid');
+        super('users', new UserTransformer(), 'uid');
     }
 
     public getByPhone(phone: string): Promise<IUser | null> {

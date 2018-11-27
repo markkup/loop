@@ -1,5 +1,7 @@
-import { expect } from 'chai';
 import 'mocha';
+
+import { expect } from 'chai';
+
 import { Datetime } from '../../src/lib/datetime';
 
 describe('lib/datetime.js', () => {
@@ -8,7 +10,7 @@ describe('lib/datetime.js', () => {
 
         const datetime = new Datetime();
         const input = new Date();
-        const result = datetime.formatDate(input, 'yyyy M d H');
+        const result = datetime.formatDate(input, 'yyyy M d H', true);
 
         const year = input.getUTCFullYear();
         const month = input.getUTCMonth() + 1;

@@ -1,9 +1,10 @@
+import GroupTransformer from '../transformers/GroupTransformer';
 import Repository from './Repository';
 
 class Groups extends Repository {
 
     constructor() {
-        super('groups');
+        super('groups', new GroupTransformer());
     }
 }
 

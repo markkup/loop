@@ -1,11 +1,11 @@
 import { CustomerState } from './enums/CustomerState';
 import { CustomerStatus } from './enums/CustomerStatus';
-import { IChannel, ICustomer, IGroup, ILastMessage, IUser } from './interfaces';
+import { IChannel, ICustomer, IFirebaseConfig, IGroup, ILastMessage, IUser } from './interfaces';
 import appkit, { IAppkitConfig } from './lib/appkit';
 import auth from './lib/auth';
 import connections from './lib/connections';
 import datetime from './lib/datetime';
-import firebase, { IFirebaseConfig } from './lib/firebase';
+import firebase from './lib/firebase';
 import phones from './lib/phones';
 import profile from './lib/profile';
 import push from './lib/push';

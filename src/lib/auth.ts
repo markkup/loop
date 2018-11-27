@@ -52,7 +52,7 @@ export class Auth {
             }
 
             // auth
-            await firebase.auth.signInWithCustomToken(token);
+            await firebase.auth().signInWithCustomToken(token);
 
             // check for a record with allowed access
             const user = await Loop.users.getByPhoneClean(phoneClean);
@@ -83,19 +83,14 @@ export class Auth {
     public async ensureSignIn(phoneNumber: string, token: string): Promise<IUser> {
 
         const phoneClean = phones.clean(phoneNumber);
-
-        trace({ phoneClean, currentUser: firebase.auth.currentUser, token });
+        trace({ phoneClean, currentUser: firebase.auth().currentUser, token });
 
         try {
-            const res = await firebase.auth.signInWithCustomToken(token);
-            trace({ res });
-            /*const resuser = await this.signinAndWaitForAuth(token);
-            await this.delay();
-            trace({ resuser });*/
-            trace({ currentUser: firebase.auth.currentUser });
+            const res = await firebase.auth().signInWithCustomToken(token);
         } catch (e) {
             trace(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
+
                 // get jwt
                 const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=expired`);
                 const newToken = data.token;
@@ -103,10 +98,8 @@ export class Auth {
                     throw new Error(`User token could not be created`);
                 }
 
-                trace('signInWithCustomToken again');
-
                 // auth
-                await firebase.auth.signInWithCustomToken(newToken);
+                await firebase.auth().signInWithCustomToken(newToken);
 
                 // save new token
                 token = newToken;
@@ -114,10 +107,6 @@ export class Auth {
                 throw e;
             }
         }
-
-        // trace('delaying');
-        // await this.delay(500);
-        trace('getByPhoneClean');
 
         let user;
         while (!user) {
@@ -127,22 +116,18 @@ export class Auth {
                     throw new Error(`User is not recognized or is not allowed access`);
                 }
 
-                trace('updateing', { user });
-
                 user.token = token;
                 user.lastAccessDate = Date.now();
 
                 // update user
                 await Loop.users.update(user.uid, user);
 
-                trace('returning');
-
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
                     trace('got error reading user', { e });
                     throw e;
                 }
-                trace(`permission denied, trying again`);
+
                 await this.delay(5);
             }
         }
@@ -150,31 +135,7 @@ export class Auth {
     }
 
     public signOut() {
-        return firebase.auth.signOut();
-    }
-
-    protected signinAndWaitForAuth(token: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-
-            const remove = firebase.auth.onAuthStateChanged((user) => {
-                trace('auth changed', { user });
-                if (user) {
-                    remove();
-                    resolve(user);
-                }
-            }, (err) => {
-                trace('auth err', { err });
-                remove();
-                reject(err);
-            });
-
-            try {
-                const res = firebase.auth.signInWithCustomToken(token);
-            } catch (e) {
-                trace('auth ex', { e });
-                reject(e);
-            }
-        });
+        return firebase.auth().signOut();
     }
 }
 
