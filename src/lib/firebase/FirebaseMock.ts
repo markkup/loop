@@ -1,10 +1,10 @@
 import * as firebase from 'firebase';
 import FirebaseServer = require('firebase-server');
 
-import { IFirebaseConfig, IFirebaseServer } from '../../interfaces';
+import { IFirebase, IFirebaseConfig } from '../../interfaces';
 import appkit from '../appkit';
 
-class FirebaseServerMock implements IFirebaseServer {
+class FirebaseMock implements IFirebase {
 
     public cloudFunctionMock: any | null;
     protected config: IFirebaseConfig = {} as IFirebaseConfig;
@@ -42,4 +42,4 @@ class FirebaseServerMock implements IFirebaseServer {
 
 }
 
-export default FirebaseServerMock;
+export default FirebaseMock;

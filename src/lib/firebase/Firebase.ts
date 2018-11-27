@@ -1,10 +1,9 @@
 import * as firebase from 'firebase';
 
-import { IFirebaseConfig, IFirebaseServer } from '../../interfaces';
+import { IFirebase, IFirebaseConfig } from '../../interfaces';
 import appkit from '../appkit';
-import FirebaseServerMock from './FirebaseServerMock';
 
-export class FirebaseServer implements IFirebaseServer {
+class Firebase implements IFirebase {
 
     protected config: IFirebaseConfig = {} as IFirebaseConfig;
 
@@ -41,10 +40,4 @@ export class FirebaseServer implements IFirebaseServer {
     }
 }
 
-let exportedInstance: IFirebaseServer;
-if (process.env.NODE_ENV === 'test') {
-    exportedInstance = new FirebaseServerMock();
-} else {
-    exportedInstance = new FirebaseServer();
-}
-export default exportedInstance;
+export default Firebase;
