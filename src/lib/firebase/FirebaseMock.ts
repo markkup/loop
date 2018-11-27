@@ -1,8 +1,6 @@
 import * as firebase from 'firebase';
-import FirebaseServer = require('firebase-server');
 
 import { IFirebase, IFirebaseConfig } from '../../interfaces';
-import appkit from '../appkit';
 
 class FirebaseMock implements IFirebase {
 
@@ -14,13 +12,13 @@ class FirebaseMock implements IFirebase {
             if (firebase.apps && firebase.apps.length > 0) {
                 return;
             }
+            const FirebaseServer = require('firebase-server');
             new FirebaseServer(5000, 'localhost', null);
             this.config = config;
             await firebase.initializeApp({
                 databaseURL: `ws://localhost:5000`,
             });
         } catch (e) {
-            appkit.logError(e, 'Firebase.init');
             throw e;
         }
     }
