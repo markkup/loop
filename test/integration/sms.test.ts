@@ -1,7 +1,10 @@
-import { expect } from 'chai';
 import 'mocha';
-import config from '../../config';
-import Loop from '../../src/index';
+
+import FirebaseTestServer from '../lib/FirebaseTestServer';
+
+before(() => {
+    FirebaseTestServer.init();
+});
 
 describe('lib/sms.js', () => {
 

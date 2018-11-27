@@ -8,15 +8,10 @@ class FirebaseMock implements IFirebase {
     protected config: IFirebaseConfig = {} as IFirebaseConfig;
 
     public async init(config: IFirebaseConfig): Promise<void> {
-        if (process.env.NODE_ENV !== 'test') {
-            throw new Error('Mock not supported outside of testing');
-        }
         try {
             if (firebase.apps && firebase.apps.length > 0) {
                 return;
             }
-            const FirebaseServer = require('firebase-server');
-            new FirebaseServer(5000, 'localhost', null);
             this.config = config;
             await firebase.initializeApp({
                 databaseURL: `ws://localhost:5000`,

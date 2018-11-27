@@ -1,7 +1,14 @@
-import { expect } from 'chai';
 import 'mocha';
+
+import { expect } from 'chai';
+
 import config from '../../config';
-import Loop from '../../src/index';
+import Loop from '../../src';
+import FirebaseTestServer from '../lib/FirebaseTestServer';
+
+before(() => {
+    FirebaseTestServer.init();
+});
 
 describe('models/Users.js', () => {
 

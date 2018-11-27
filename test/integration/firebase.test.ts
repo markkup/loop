@@ -6,10 +6,15 @@ import * as sinon from 'sinon';
 
 import config from '../../config';
 import firebase from '../../src/lib/firebase';
+import FirebaseTestServer from '../lib/FirebaseTestServer';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const sandbox = sinon.createSandbox();
+
+before(() => {
+    FirebaseTestServer.init();
+});
 
 afterEach(() => {
     sandbox.restore();
