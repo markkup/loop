@@ -20,6 +20,7 @@ export class Profile {
     protected currentUser: IUser | null = null;
     protected changeListener: any = null;
     protected eventEmitter = new EventEmitter();
+    protected validating: boolean = false;
 
     public watch(user: IUser, listener: ProfileWatchFunction): IProfileWatch | null {
 
@@ -48,6 +49,7 @@ export class Profile {
     }
 
     public async login(code: string): Promise<IUser> {
+        trace(`login: ${code}`);
         const user = await Loop.auth.signIn(code);
         this.currentUser = user;
         this.fireLoginStateChanged(user);
@@ -58,6 +60,7 @@ export class Profile {
     }
 
     public async logout(): Promise<void> {
+        trace(`logout`);
         await Loop.auth.signOut();
         this.currentUser = null;
         this.fireLoginStateChanged(null);
@@ -80,16 +83,31 @@ export class Profile {
     }
 
     protected async validateProfileState() {
-        if (appkit.network.connectionState === 'on' && this.currentUser) {
-            const user = await this.ensureLoggedIn();
-            if (!user) {
-                trace('ensureLoggedIn failed');
-                if (this.profileListener) {
-                    this.profileListener(new Error('You do not have permission to sign into this app'), false, null);
-                }
-                // app should logout here
+        try {
+            if (this.validating) {
+                trace('already validating');
+                return;
             }
-            this.setChangeListener();
+
+            this.validating = true;
+
+            if (appkit.network.connectionState === 'on' && this.currentUser) {
+                const user = await this.ensureLoggedIn();
+                if (!user) {
+                    trace('ensureLoggedIn failed');
+                    if (this.profileListener) {
+                        this.profileListener(
+                            new Error('You do not have permission to sign into this app'),
+                            false,
+                            null,
+                        );
+                    }
+                    // app should logout here
+                }
+                this.setChangeListener();
+            }
+        } finally {
+            this.validating = false;
         }
     }
 
