@@ -82,11 +82,15 @@ export class Auth {
     // throw if not valid
     public async ensureSignIn(phoneNumber: string, token: string): Promise<IUser> {
 
+        trace('ensureSignIn');
+
         const phoneClean = phones.clean(phoneNumber);
         trace({ phoneClean, currentUser: firebase.auth().currentUser, token });
 
         try {
+            trace('trying signInWithCustomToken');
             const res = await firebase.auth().signInWithCustomToken(token);
+            trace({ res });
         } catch (e) {
             trace(`signInWithCustomToken exception: ${e.message || e}`);
             if (e.message === 'TOKEN_EXPIRED') {
@@ -99,7 +103,12 @@ export class Auth {
                 }
 
                 // auth
-                await firebase.auth().signInWithCustomToken(newToken);
+                try {
+                    await firebase.auth().signInWithCustomToken(newToken);
+                } catch (e2) {
+                    trace(`second signin attempt failed: ${e2.message || e2}`);
+                    throw e;
+                }
 
                 // save new token
                 token = newToken;
@@ -110,6 +119,7 @@ export class Auth {
 
         let user;
         while (!user) {
+            trace('trying to get user...');
             try {
                 user = await Loop.users.getByPhoneClean(phoneClean);
                 if (!user || !user.allowAccess) {
@@ -131,6 +141,8 @@ export class Auth {
                 await this.delay(5);
             }
         }
+
+        trace(`returning user: ${user && user.uid}`);
         return user;
     }
 

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+
 import Loop from '..';
 import { IUser } from '../interfaces';
 import appkit from './appkit';
@@ -82,7 +83,7 @@ export class Profile {
         if (appkit.network.connectionState === 'on' && this.currentUser) {
             const user = await this.ensureLoggedIn();
             if (!user) {
-                trace('ensureLogin failed');
+                trace('ensureLoggedIn failed');
                 if (this.profileListener) {
                     this.profileListener(new Error('You do not have permission to sign into this app'), false, null);
                 }

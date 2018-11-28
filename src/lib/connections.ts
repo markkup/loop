@@ -58,11 +58,11 @@ export class Connections {
         });
     }
 
-    public get friends() {
+    public get friends(): string[] {
         return this.friendsArray;
     }
 
-    public get groups() {
+    public get groups(): IGroup[] {
         return this.groupsArray;
     }
 
