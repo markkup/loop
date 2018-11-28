@@ -39,9 +39,9 @@ export class Profile {
 
         return {
             remove: () => {
-                this.profileListener = null;
-                this.clearChangeListener();
                 appkit.network.removeEventListener('change', this.networkChanged.bind(this));
+                this.clearChangeListener();
+                this.profileListener = null;
             },
             listener,
         };
@@ -95,17 +95,20 @@ export class Profile {
 
     protected async ensureLoggedIn(): Promise<IUser | null> {
         if (!this.currentUser || !this.currentUser.token) {
+            trace(`ensureLoggedIn, no currentUser token: ${this.currentUser && this.currentUser.token}`);
             this.fireLoginStateChanged(null);
             return null;
         }
 
         let user: IUser | null = null;
         try {
+            trace(`ensureLoggedIn calling ensureSignIn`);
             user = await Loop.auth.ensureSignIn(this.currentUser.phone, this.currentUser.token);
         } catch (e) {
             appkit.logError(e, 'ensureLoggedIn');
         }
 
+        trace(user ? 'ensureLoggedIn got user' : 'ensureLoggedIn got null');
         this.fireLoginStateChanged(user);
         return user;
     }
