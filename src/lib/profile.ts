@@ -83,12 +83,14 @@ export class Profile {
     }
 
     protected async validateProfileState() {
-        try {
-            if (this.validating) {
-                trace('already validating');
-                return;
-            }
+        trace(`validateProfileState: this.validating=${this.validating}, this.currentUser=${this.currentUser}`);
 
+        if (this.validating) {
+            trace('already validating');
+            return;
+        }
+
+        try {
             this.validating = true;
 
             if (appkit.network.connectionState === 'on' && this.currentUser) {
