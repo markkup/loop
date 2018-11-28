@@ -16,7 +16,7 @@ export default class UserTransformer implements IModelTransformer<IUser> {
             phone: data.phone || '',
             phoneClean: data.phoneClean || '',
             role: data.role || '',
-            token: data.XtokenXX,
+            token: data.token,
             topicBadge: data.topicBadge,
             uid: data.uid || '',
         };
