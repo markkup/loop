@@ -67,14 +67,23 @@ class Users extends Repository<IUser> {
 
     public add(displayName: string, bio: string, phone: string): Promise<any> {
         try {
-            const user = {
-                phone,
-                phoneClean: phones.clean(phone),
+            const user: IUser = {
+                allowAccess: true,
+                allowNotifications: false,
+                avatarUrl: '',
+                bio,
                 displayName,
                 initials: this.getNameInitials(displayName),
-                bio,
-                allowAccess: true,
-            } as IUser;
+                lastAccessDate: Date.now(),
+                messageBadge: 0,
+                permissions: [],
+                phone,
+                phoneClean: phones.clean(phone),
+                role: '',
+                token: '',
+                topicBadge: 0,
+                uid: '',
+            };
             return this.insert(user);
         } catch (e) {
             appkit.logError(e);

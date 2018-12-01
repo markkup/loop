@@ -5,13 +5,13 @@ export default interface IUser {
     bio: string;
     displayName: string;
     initials: string;
-    lastAccessDate?: number;
-    messageBadge?: number;
+    lastAccessDate: number;
+    messageBadge: number;
     permissions: string[];
     phone: string;
     phoneClean: string;
     role: string;
-    token?: string;
-    topicBadge?: number;
+    token: string;
+    topicBadge: number;
     uid: string;
 }
