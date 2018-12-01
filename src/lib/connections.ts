@@ -32,11 +32,11 @@ export class Connections {
                     trace(`connections updated`);
 
                     this.rawConnections = connections;
-                    if (connections.friends) {
+                    if (connections && connections.friends) {
                         this.friendsArray = Object.keys(connections.friends).map(uid => uid);
                     }
                     this.groupsArray = [];
-                    if (connections.groups) {
+                    if (connections && connections.groups) {
                         for (const key in connections.groups) {
                             if (key) {
                                 trace(`found group ${key}`);
