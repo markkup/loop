@@ -64,10 +64,11 @@ export class Connections {
                             }
                         }
                     }
+
+                    this.connectionsValid = true;
+                    this.eventEmitter.emit('changed');
                 });
 
-                this.connectionsValid = true;
-                this.eventEmitter.emit('changed');
             } else {
                 this.connectionsValid = false;
             }
