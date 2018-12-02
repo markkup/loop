@@ -25,6 +25,7 @@ export class Connections {
     protected groupsArray: IGroup[] = [];
     protected userCache: { [index: string]: IUser | null } = {};
     protected eventEmitter = new EventEmitter();
+    protected connectionsValid: boolean = false;
 
     public init() {
         trace('connections initialized');
@@ -64,22 +65,35 @@ export class Connections {
                         }
                     }
                 });
-            }
 
-            this.eventEmitter.emit('changed');
+                this.connectionsValid = true;
+                this.eventEmitter.emit('changed');
+            } else {
+                this.connectionsValid = false;
+            }
         });
     }
 
     public watch(listener: ConnectionsWatchFunction): IConnectionsWatch {
+
+        // setup listener
         const watchListener = () => {
             if (listener) {
                 listener(this);
             }
         };
         this.eventEmitter.on('changed', watchListener);
+
+        // if this was called and our connections are already valid
+        // then make an initial call of the listener
+        if (this.connectionsValid && listener) {
+            listener(this);
+        }
+
+        const base = this;
         return {
             remove: () => {
-                this.eventEmitter.off('changed', watchListener);
+                base.eventEmitter.off('changed', watchListener);
             },
             listener,
         };
