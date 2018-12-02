@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 import { IGroup, IUser } from '../interfaces';
 import Groups from '../repositories/Groups';
 import UserConnections from '../repositories/UserConnections';
@@ -8,6 +10,13 @@ import tracing from './tracing';
 
 const trace = tracing.with('connections');
 
+export type ConnectionsWatchFunction = (connections: Connections) => void;
+
+export interface IConnectionsWatch {
+    remove: () => void;
+    listener: ConnectionsWatchFunction;
+}
+
 export class Connections {
 
     protected connectionsListener: IRecordWatch | null = null;
@@ -15,6 +24,7 @@ export class Connections {
     protected friendsArray: string[] = [];
     protected groupsArray: IGroup[] = [];
     protected userCache: { [index: string]: IUser | null } = {};
+    protected eventEmitter = new EventEmitter();
 
     public init() {
         trace('connections initialized');
@@ -55,7 +65,24 @@ export class Connections {
                     }
                 });
             }
+
+            this.eventEmitter.emit('changed');
         });
+    }
+
+    public watch(listener: ConnectionsWatchFunction): IConnectionsWatch {
+        const watchListener = () => {
+            if (listener) {
+                listener(this);
+            }
+        };
+        this.eventEmitter.on('changed', watchListener);
+        return {
+            remove: () => {
+                this.eventEmitter.off('changed', watchListener);
+            },
+            listener,
+        };
     }
 
     public get friends(): string[] {
