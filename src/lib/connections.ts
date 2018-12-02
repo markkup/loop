@@ -90,10 +90,17 @@ export class Connections {
             listener(this);
         }
 
-        const base = this;
         return {
             remove: () => {
-                base.eventEmitter.off('changed', watchListener);
+                if (this.eventEmitter.off) {
+                    console.log('has off');
+                    this.eventEmitter.off('changed', watchListener);
+                } else if (this.eventEmitter.removeListener) {
+                    console.log('has removeListener');
+                    this.eventEmitter.removeListener('changed', watchListener);
+                } else {
+                    console.log('has none');
+                }
             },
             listener,
         };
