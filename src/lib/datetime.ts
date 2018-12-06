@@ -2,8 +2,8 @@ import * as moment from 'moment';
 
 export class Datetime {
 
-    public get moment() {
-        return moment;
+    public moment(arg: any) {
+        return moment(arg);
     }
 
     public formatTimeSince(date: Date, dateNow?: Date) {
