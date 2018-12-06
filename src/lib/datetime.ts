@@ -1,4 +1,10 @@
+import * as moment from 'moment';
+
 export class Datetime {
+
+    public get moment() {
+        return moment;
+    }
 
     public formatTimeSince(date: Date, dateNow?: Date) {
         if (dateNow === undefined) {
