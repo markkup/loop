@@ -14,6 +14,14 @@ class UserTopics {
         });
     }
 
+    public getAllByUserWithEvents(uid: string, active: boolean): Promise<any> {
+        return this.firebaseRepo.getRecordsByChildValue(this.formatNode(uid), 'event/active', active);
+    }
+
+    public watchAllByUserWithEvents(uid: string, active: boolean, callback: (records: any[]) => void): IRecordWatch {
+        return this.firebaseRepo.watchRecordsByChildValue(this.formatNode(uid), 'event/active', active, callback);
+    }
+
     public update(uid: string, key: string, props: any): Promise<any> {
         return this.firebaseRepo.updateRecord(this.formatNode(uid), key, props);
     }

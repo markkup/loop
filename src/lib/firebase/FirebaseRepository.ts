@@ -1,5 +1,4 @@
 import * as firebase from 'firebase';
-import appkit from '../appkit';
 
 export interface IRecordWatch {
     remove: () => void;
@@ -12,8 +11,18 @@ export interface IKeyedResult<T = any> {
 
 class FirebaseRepository {
 
+    private firebase: any;
+
+    constructor(firebaseOvveride?: any) {
+        if (firebaseOvveride) {
+            this.firebase = firebase;
+        } else {
+            this.firebase = firebase;
+        }
+    }
+
     public get db() {
-        return firebase.database();
+        return this.firebase.database();
     }
 
     public ref(collection: string) {
@@ -64,8 +73,7 @@ class FirebaseRepository {
         imageType: string,
         imageBlob: any): Promise<string | null> {
 
-        const db = firebase.database();
-        const store = firebase.storage();
+        const store = this.firebase.storage();
 
         // get an image ref
         const imageRef = store.ref(`${imageType}/${key}.jpg`);
@@ -230,20 +238,23 @@ class FirebaseRepository {
     public watchRecordsByChildValue(
         collection: string,
         child: string,
-        value: string,
+        value: any,
         callback: (data: any[]) => void): IRecordWatch {
         const result = {
-            listener: this.ref(collection).orderByChild(child).equalTo(value).on('value', snapshot => {
-                if (!snapshot) {
-                    throw new Error(`Cannot watch records`);
-                }
-                const records = snapshot.val();
-                if (!records) {
-                    callback([]);
-                } else {
-                    callback(Object.keys(records).map(key => records[key]));
-                }
-            }),
+            listener: this.ref(collection)
+                .orderByChild(child)
+                .equalTo(value)
+                .on('value', (snapshot: firebase.database.DataSnapshot) => {
+                    if (!snapshot) {
+                        throw new Error(`Cannot watch records`);
+                    }
+                    const records = snapshot.val();
+                    if (!records) {
+                        callback([]);
+                    } else {
+                        callback(Object.keys(records).map(key => records[key]));
+                    }
+                }),
             remove: () => {
                 const ref = this.ref(collection).orderByChild(child).equalTo(value);
                 ref.off('value', result.listener);
