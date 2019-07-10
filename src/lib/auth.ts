@@ -58,7 +58,7 @@ export class Auth {
 
             // check for a record with allowed access
             const user = await usersRepo.getByPhoneClean(phoneClean);
-            if (!user || user.allowAccess) {
+            if (!user || !user.allowAccess) {
                 throw new Error('Phone number is not recognized or is not allowed access');
             }
 
