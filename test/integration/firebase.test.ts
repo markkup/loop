@@ -20,7 +20,7 @@ afterEach(() => {
     sandbox.restore();
 });
 
-describe('lib/firebase.js', () => {
+describe('integration/firebase', () => {
 
     it('should init with config', async () => {
 

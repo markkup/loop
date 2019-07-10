@@ -1,5 +1,5 @@
-import Loop from '..';
 import { IUser } from '../interfaces';
+import Users from '../repositories/Users';
 import appkit from './appkit';
 import firebase from './firebase';
 import phones from './phones';
@@ -37,6 +37,8 @@ export class Auth {
 
             const phoneClean = this.lastPhone;
 
+            const usersRepo = new Users();
+
             // check code
             const matchCode = this.lastPasscode;
             if (code !== matchCode && code !== '654321') {
@@ -55,8 +57,8 @@ export class Auth {
             await firebase.auth().signInWithCustomToken(token);
 
             // check for a record with allowed access
-            const user = await Loop.users.getByPhoneClean(phoneClean);
-            if (!user || !user.allowAccess) {
+            const user = await usersRepo.getByPhoneClean(phoneClean);
+            if (!user || user.allowAccess) {
                 throw new Error('Phone number is not recognized or is not allowed access');
             }
 
@@ -64,7 +66,7 @@ export class Auth {
             user.lastAccessDate = Date.now();
 
             // update user
-            await Loop.users.update(user.uid, user);
+            await usersRepo.update(user.uid, user);
 
             return user;
         } catch (e) {
@@ -85,15 +87,16 @@ export class Auth {
         trace('ensureSignIn');
 
         const phoneClean = phones.clean(phoneNumber);
-        trace({ phoneClean, currentUser: firebase.auth().currentUser, token });
+        trace('clean phone', { phoneClean, currentUser: firebase.auth().currentUser, token });
 
         try {
             trace('trying signInWithCustomToken');
             const res = await firebase.auth().signInWithCustomToken(token);
-            trace({ res });
+            trace('signInWithCustomToken', { res });
         } catch (e) {
-            trace(`signInWithCustomToken exception: ${e.message || e}`);
-            if (e.message === 'TOKEN_EXPIRED') {
+            const error = e.message || e;
+            trace(`signInWithCustomToken exception: ${error}`);
+            if (error === 'TOKEN_EXPIRED' || error.indexOf('format is incorrect') !== -1) {
 
                 // get jwt
                 const data = await firebase.fetchCloudFunction(`createToken?uid=${phoneClean}&reason=expired`);
@@ -104,9 +107,12 @@ export class Auth {
 
                 // auth
                 try {
-                    await firebase.auth().signInWithCustomToken(newToken);
+                    trace('trying signInWithCustomToken 2');
+                    const res2 = await firebase.auth().signInWithCustomToken(newToken);
+                    trace('signInWithCustomToken 2', { res2 });
                 } catch (e2) {
-                    trace(`second signin attempt failed: ${e2.message || e2}`);
+                    const error2 = e2.message || e2;
+                    trace(`second signin attempt failed: ${error2}`);
                     throw e;
                 }
 
@@ -121,20 +127,24 @@ export class Auth {
         while (!user) {
             trace('trying to get user...');
             try {
-                user = await Loop.users.getByPhoneClean(phoneClean);
-                if (!user || !user.allowAccess) {
-                    throw new Error(`User is not recognized or is not allowed access`);
+                const usersRepo = new Users();
+                user = await usersRepo.getByPhoneClean(phoneClean);
+                if (!user) {
+                    throw new Error(`User is not recognized`);
+                }
+                if (!user.allowAccess) {
+                    throw new Error(`User is not allowed access`);
                 }
 
                 user.token = token;
                 user.lastAccessDate = Date.now();
 
                 // update user
-                await Loop.users.update(user.uid, user);
+                await usersRepo.update(user.uid, user);
 
             } catch (e) {
                 if (e.message.indexOf('permission_denied') === -1) {
-                    trace('got error reading user', { e });
+                    trace('got error reading user', { message: e.message || e, e });
                     throw e;
                 }
 

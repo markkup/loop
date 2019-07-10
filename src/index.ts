@@ -6,6 +6,7 @@ import auth from './lib/auth';
 import connections from './lib/connections';
 import datetime from './lib/datetime';
 import firebase from './lib/firebase';
+import loggr from './lib/loggr';
 import phones from './lib/phones';
 import profile from './lib/profile';
 import push from './lib/push';
@@ -45,6 +46,7 @@ export class Loop {
     public readonly sms = sms;
     public readonly profile = profile;
     public readonly connections = connections;
+    public readonly loggr = loggr;
 
     // repositories
     public readonly users = new Users();

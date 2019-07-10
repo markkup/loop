@@ -9,10 +9,10 @@ class FirebaseMock implements IFirebase {
 
     public async init(config: IFirebaseConfig): Promise<void> {
         try {
+            this.config = config;
             if (firebase.apps && firebase.apps.length > 0) {
                 return;
             }
-            this.config = config;
             await firebase.initializeApp({
                 databaseURL: `ws://localhost:5000`,
             });

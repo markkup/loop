@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import { Datetime } from '../../src/lib/datetime';
 
-describe('lib/datetime.js', () => {
+describe('unit/datetime', () => {
 
     it('should format date', async () => {
 

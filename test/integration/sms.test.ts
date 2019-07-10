@@ -6,7 +6,7 @@ before(() => {
     FirebaseTestServer.init();
 });
 
-describe('lib/sms.js', () => {
+describe('integration/sms', () => {
 
     /*it('should send sms', async () => {
 

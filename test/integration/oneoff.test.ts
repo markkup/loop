@@ -10,7 +10,7 @@ before(async () => {
     await firebase.init(config.firebase);
 });
 
-describe.skip('One Off Tests', () => {
+describe.skip('integration/oneoff', () => {
 
     it.skip('should query user events', async () => {
 

@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
 
-import Loop from '..';
 import { IUser } from '../interfaces';
+import Users from '../repositories/Users';
 import appkit from './appkit';
+import Auth from './auth';
+import loggr from './loggr';
 import tracing from './tracing';
 
 const trace = tracing.with('profile');
@@ -22,7 +24,7 @@ export class Profile {
     protected eventEmitter = new EventEmitter();
     protected validating: boolean = false;
 
-    public watch(user: IUser, listener: ProfileWatchFunction): IProfileWatch | null {
+    public watch(user: IUser | null, listener: ProfileWatchFunction): IProfileWatch | null {
 
         if (this.profileListener) {
             listener(new Error('profile listener is already set, remove it first'), false, null);
@@ -40,17 +42,16 @@ export class Profile {
 
         return {
             remove: () => {
-                appkit.network.removeEventListener('change', this.networkChanged.bind(this));
-                this.clearChangeListener();
                 this.profileListener = null;
+                this.clearChangeListener();
+                appkit.network.removeEventListener('change', this.networkChanged.bind(this));
             },
             listener,
         };
     }
 
     public async login(code: string): Promise<IUser> {
-        trace(`login: ${code}`);
-        const user = await Loop.auth.signIn(code);
+        const user = await Auth.signIn(code);
         this.currentUser = user;
         this.fireLoginStateChanged(user);
         if (this.profileListener) {
@@ -60,8 +61,7 @@ export class Profile {
     }
 
     public async logout(): Promise<void> {
-        trace(`logout`);
-        await Loop.auth.signOut();
+        await Auth.signOut();
         this.currentUser = null;
         this.fireLoginStateChanged(null);
         if (this.profileListener) {
@@ -79,6 +79,7 @@ export class Profile {
 
     protected fireLoginStateChanged(user: IUser | null): void {
         trace(`login state changed: ${user ? '' : 'NOT'} logged in`);
+        loggr.setCurrentUsername(user ? user.uid : '');
         this.eventEmitter.emit('login-changed', user);
     }
 
@@ -126,7 +127,7 @@ export class Profile {
         let user: IUser | null = null;
         try {
             trace(`ensureLoggedIn calling ensureSignIn`);
-            user = await Loop.auth.ensureSignIn(this.currentUser.phone, this.currentUser.token);
+            user = await Auth.ensureSignIn(this.currentUser.phone, this.currentUser.token);
         } catch (e) {
             appkit.logError(e, 'ensureLoggedIn');
         }
@@ -148,7 +149,8 @@ export class Profile {
     protected setChangeListener() {
         this.clearChangeListener();
         if (this.currentUser) {
-            this.changeListener = Loop.users.watch(this.currentUser.uid, user => {
+            const usersRepo = new Users();
+            this.changeListener = usersRepo.watch(this.currentUser.uid, user => {
                 if (user) {
                     trace(`changed: ${user.uid}`);
                     if (this.profileListener) {

@@ -10,7 +10,7 @@ before(() => {
     FirebaseTestServer.init();
 });
 
-describe('models/Users.js', () => {
+describe('integration/users', () => {
 
     it('should add and manipulate user', async () => {
 

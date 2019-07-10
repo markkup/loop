@@ -16,7 +16,7 @@ afterEach(() => {
     sandbox.restore();
 });
 
-describe('repositories/Repository.ts', () => {
+describe('unit/repository', () => {
 
     const collection1 = 'collection1';
     const key1 = 'key1';
