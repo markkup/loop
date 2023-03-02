@@ -30,7 +30,7 @@
     "chai-as-promised": "^7.1.1",
     "firebase-server": "^1.0.0",
     "fs": "0.0.1-security",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "node-fetch": "^2.2.0",
     "sinon": "^7.1.1",
     "ts-node": "^7.0.1",
